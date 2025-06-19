@@ -135,4 +135,67 @@ GROUP BY star, director ORDER BY SUM(gross) DESC limit 5)
 SELECT * FROM movies WHERE (star, director, gross) IN (SELECT * from top_duos);
 
 
+-- Correlated subquery 
+
+-- Find all the movies that have a rating higher than the average rating of movies in the same genre[Animation].
+
+select * from movies m1 WHERE
+score > (SELECT AVG(score) FROM movies m2 WHERE m2.genre = m1.genre);
+-- comparing movies of same genre
+
+
+-- FInd the favorite food of each customer
+
+
+WITH fav_food AS (
+  SELECT 
+    t2.user_id,
+    t1.name,
+    t4.f_name,
+    COUNT(*) AS frequency
+  FROM users t1
+  JOIN orders t2 ON t1.user_id = t2.user_id
+  JOIN order_details t3 ON t2.order_id = t3.order_id
+  JOIN food t4 ON t3.f_id = t4.f_id
+  GROUP BY t2.user_id, t1.name, t4.f_name, t3.f_id
+)
+SELECT *
+FROM fav_food f1
+WHERE frequency = (
+  SELECT MAX(frequency)
+  FROM fav_food f2
+  WHERE f2.user_id = f1.user_id
+);
+
+
+
+-- use of subqueries in SELECT
+-- get the percentage of votes for each movie compared to the total number of votes.
+SELECT * FROM movies m1
+WHERE score > (SELECT AVG(score) FROM movies m2 WHERE m2.genre = m1.genre);
+
+SELECT name, (votes/(SELECT sum(votes) FROM movies))*100 FROM movies;
+
+
+
+-- Display all movie names, genre, score and avg(score) of genre
+SELECT name, genre, score, 
+(SELECT AVG(score) FROM movies m2
+WHERE m2.genre = m1.genre)
+from movies m1;
+
+
+
+-- FROM 
+
+
+
+
+
+
+
+
+
+
+
 
