@@ -124,3 +124,28 @@ ADD COLUMN cpu_speed DECIMAL(10,1) AFTER cpu_name;
 
 
 SELECT * FROM laptops;
+
+UPDATE laptops
+SET 
+  cpu_brand = SUBSTRING_INDEX(Cpu, ' ', 1),
+  cpu_speed = CAST(REPLACE(SUBSTRING_INDEX(Cpu, ' ', -1), 'GHz', '') AS DECIMAL(10,2)),
+  cpu_name = TRIM(
+    REPLACE(
+      REPLACE(Cpu, SUBSTRING_INDEX(Cpu, ' ', 1), ''),
+      SUBSTRING_INDEX(Cpu, ' ', -1),
+      ''
+    )
+  );
+
+
+SELECT * FROM laptops;
+
+ALTER Table laptops
+DROP COLUMN Cpu;
+
+SELECT ScreenResolution, 
+SUBSTRING_INDEX(SUBSTRING_INDEX(ScreenResolution, ' ', -1),'x',1),
+SUBSTRING_INDEX(SUBSTRING_INDEX(ScreenResolution, ' ', -1),'x',-1)
+FROM laptops;
+
+
